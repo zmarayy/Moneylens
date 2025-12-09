@@ -8,7 +8,7 @@ export async function handleRouletteMath(ctx: Context): Promise<void> {
   if (args.length === 0) {
     // Free basic version
     const result = `
-🎲 **Roulette Math (European Wheel)**
+🎲 **Roulette Math (European Wheel)** 🆓
 
 **Basic Probability:**
 • Red/Black: 18/37 ≈ 48.65%
@@ -20,13 +20,31 @@ export async function handleRouletteMath(ctx: Context): Promise<void> {
 • European Roulette: 2.70% (1/37)
 • This means the casino has a statistical advantage of 2.70% on even-money bets
 
-**Educational Note:**
+**📚 Educational Note:**
 Each spin is independent. The probability of red or black is always 18/37 on a European wheel (which has one green zero). The house edge comes from the zero pocket, which doesn't pay out on red/black bets.
 
+**🔓 Want More?**
+For extended analysis with specific bet types and expected value calculations, try:
+\`/roulette_math extended <mode>\`
+Available modes: red, black, even, odd, high, low, straight, split, street
+
+**⚠️ Important:**
 This is mathematical information only and does not provide gambling strategies or advice.
     `.trim();
 
-    await ctx.reply(result, { parse_mode: "Markdown" });
+    await ctx.reply(result, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "🔓 Get Premium for Extended Analysis",
+              callback_data: "buy_monthly",
+            },
+          ],
+        ],
+      },
+    });
     return;
   }
 

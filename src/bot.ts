@@ -174,42 +174,147 @@ Use /buy to purchase premium access.
 
   // Menu callbacks
   bot.action("menu_probability", async (ctx) => {
-    await ctx.reply(
-      "📊 **Probability Tools** (Premium)\n\n" +
-      "Available commands:\n" +
-      "/streak_risk <streak> <rounds>\n" +
-      "/expected_value <p> <payout> <loss> <rounds>\n" +
-      "/variance_model <p> <payout> <loss> <rounds>",
-      { parse_mode: "Markdown" }
-    );
+    const telegramId = ctx.from?.id;
+    if (!telegramId) {
+      await ctx.answerCbQuery();
+      return;
+    }
+
+    // Check if user has premium
+    const userService = (await import("./firebase")).userService;
+    await userService.getOrCreateUser(telegramId.toString(), ctx.from.username);
+    const isPremium = await userService.checkPremiumStatus(telegramId.toString());
+
+    if (!isPremium) {
+      await ctx.reply(
+        "📊 **Probability Tools** (🔒 Premium)\n\n" +
+        "These advanced tools require premium access:\n\n" +
+        "**Available Commands:**\n" +
+        "• /streak_risk <streak> <rounds>\n" +
+        "• /expected_value <p> <payout> <loss> <rounds>\n" +
+        "• /variance_model <p> <payout> <loss> <rounds>\n\n" +
+        "**💡 Example:**\n" +
+        "`/streak_risk 5 200` - Calculate probability of a 5-loss streak in 200 rounds\n\n" +
+        "**🔓 Unlock Premium:**\n" +
+        "Get access to all probability tools and more!",
+        {
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "💳 Get Premium Access",
+                  callback_data: "buy_monthly",
+                },
+              ],
+            ],
+          },
+        }
+      );
+    } else {
+      await ctx.reply(
+        "📊 **Probability Tools** ✅\n\n" +
+        "**Available Commands:**\n" +
+        "• /streak_risk <streak> <rounds>\n" +
+        "  Example: `/streak_risk 5 200`\n\n" +
+        "• /expected_value <p> <payout> <loss> <rounds>\n" +
+        "  Example: `/expected_value 0.5 2 1 100`\n\n" +
+        "• /variance_model <p> <payout> <loss> <rounds>\n" +
+        "  Example: `/variance_model 0.5 2 1 100`\n\n" +
+        "💡 Type any command to get started!",
+        { parse_mode: "Markdown" }
+      );
+    }
     await ctx.answerCbQuery();
   });
 
   bot.action("menu_casino", async (ctx) => {
     await ctx.reply(
       "🎲 **Casino Math Tools**\n\n" +
-      "Free:\n" +
-      "/roulette_math\n\n" +
-      "Premium:\n" +
-      "/roulette_math extended <mode>\n" +
-      "/blackjack_math <total>\n" +
-      "/bankroll_model <bankroll> <avgBet> <houseEdge> <rounds>\n" +
-      "/lossstreak <prob> <streak> <rounds>",
-      { parse_mode: "Markdown" }
+      "**🆓 Free Tools:**\n" +
+      "• /roulette_math - Basic roulette probability\n" +
+      "  Try it now: `/roulette_math`\n\n" +
+      "**🔒 Premium Tools:**\n" +
+      "• /roulette_math extended <mode>\n" +
+      "  Example: `/roulette_math extended red`\n\n" +
+      "• /blackjack_math <total>\n" +
+      "  Example: `/blackjack_math 15`\n\n" +
+      "• /bankroll_model <bankroll> <avgBet> <houseEdge> <rounds>\n" +
+      "  Example: `/bankroll_model 1000 10 0.027 100`\n\n" +
+      "• /lossstreak <prob> <streak> <rounds>\n" +
+      "  Example: `/lossstreak 0.52 5 200`\n\n" +
+      "💡 Start with the free tool, then upgrade for advanced analysis!",
+      {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "💳 Get Premium for Advanced Tools",
+                callback_data: "buy_monthly",
+              },
+            ],
+          ],
+        },
+      }
     );
     await ctx.answerCbQuery();
   });
 
   bot.action("menu_crypto", async (ctx) => {
-    await ctx.reply(
-      "📈 **Crypto Analytics** (Premium)\n\n" +
-      "Available commands:\n" +
-      "/token_activity <token>\n" +
-      "/holder_trend <token>\n" +
-      "/top_activity\n" +
-      "/sentiment <keyword>",
-      { parse_mode: "Markdown" }
-    );
+    const telegramId = ctx.from?.id;
+    if (!telegramId) {
+      await ctx.answerCbQuery();
+      return;
+    }
+
+    const userService = (await import("./firebase")).userService;
+    await userService.getOrCreateUser(telegramId.toString(), ctx.from.username);
+    const isPremium = await userService.checkPremiumStatus(telegramId.toString());
+
+    if (!isPremium) {
+      await ctx.reply(
+        "📈 **Crypto Analytics** (🔒 Premium)\n\n" +
+        "These market analysis tools require premium access:\n\n" +
+        "**Available Commands:**\n" +
+        "• /token_activity <token>\n" +
+        "• /holder_trend <token>\n" +
+        "• /top_activity\n" +
+        "• /sentiment <keyword>\n\n" +
+        "**💡 Example:**\n" +
+        "`/token_activity BTC` - View Bitcoin activity metrics\n\n" +
+        "**🔓 Unlock Premium:**\n" +
+        "Get access to all crypto analytics tools!",
+        {
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "💳 Get Premium Access",
+                  callback_data: "buy_monthly",
+                },
+              ],
+            ],
+          },
+        }
+      );
+    } else {
+      await ctx.reply(
+        "📈 **Crypto Analytics** ✅\n\n" +
+        "**Available Commands:**\n" +
+        "• /token_activity <token>\n" +
+        "  Example: `/token_activity BTC`\n\n" +
+        "• /holder_trend <token>\n" +
+        "  Example: `/holder_trend ETH`\n\n" +
+        "• /top_activity\n" +
+        "  View top tokens by activity\n\n" +
+        "• /sentiment <keyword>\n" +
+        "  Example: `/sentiment bitcoin`\n\n" +
+        "💡 Type any command to get started!",
+        { parse_mode: "Markdown" }
+      );
+    }
     await ctx.answerCbQuery();
   });
 

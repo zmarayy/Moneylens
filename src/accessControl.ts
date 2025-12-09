@@ -25,15 +25,37 @@ export async function requirePremium(
   if (!isPremium) {
     await ctx.reply(
       "🔒 **Premium Feature Required**\n\n" +
-      "This tool is available for premium users only.\n\n" +
-      "**What you get with Premium:**\n" +
-      "✅ All probability & risk tools\n" +
-      "✅ Extended casino math analysis\n" +
-      "✅ Crypto analytics & insights\n" +
-      "✅ Advanced simulations\n\n" +
-      "**Get Premium:**\n" +
-      "Type /buy to see pricing and purchase premium access.\n\n" +
-      "💡 Tip: Some features are free! Try /roulette_math to get started."
+      "This tool is available for **premium users only**.\n\n" +
+      "**✨ What You Get with Premium:**\n" +
+      "✅ All probability & risk analysis tools\n" +
+      "✅ Extended casino math calculations\n" +
+      "✅ Crypto analytics & market insights\n" +
+      "✅ Advanced Monte Carlo simulations\n" +
+      "✅ Priority support\n\n" +
+      "**💰 Pricing:**\n" +
+      "• Monthly: £20/month (auto-renews)\n" +
+      "• Lifetime: £200 (one-time payment)\n\n" +
+      "**🚀 Get Started:**\n" +
+      "Click the button below to unlock all premium features!",
+      {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "💳 Get Premium Access",
+                callback_data: "buy_monthly",
+              },
+            ],
+            [
+              {
+                text: "💰 View Pricing",
+                callback_data: "menu_pricing",
+              },
+            ],
+          ],
+        },
+      }
     );
     return;
   }
