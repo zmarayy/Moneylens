@@ -28,71 +28,72 @@ export async function handleStart(ctx: Context): Promise<void> {
             const durationText = planType === "lifetime" ? "✨ LIFETIME ✨" : "30 days";
             const emoji = planType === "lifetime" ? "👑" : "⭐";
             
-            await ctx.reply(
-              `${emoji} **🎉 Welcome to Premium!** ${emoji}\n\n` +
-              `**Payment Confirmed** ✅\n` +
-              `Your premium access has been activated!\n\n` +
-              `**Your Plan:**\n` +
+            const paymentSuccessMessage = `${emoji} *🎉 Welcome to Premium\\!* ${emoji}\n\n` +
+              `*Payment Confirmed* ✅\n` +
+              `Your premium access has been activated\\!\n\n` +
+              `*Your Plan:*\n` +
               `• ${durationText} Premium Access\n` +
               `• All premium features unlocked\n` +
               `• Priority support\n\n` +
-              `**🚀 What's Next?**\n` +
-              `Explore all premium tools using the buttons below or type /help to see all commands.\n\n` +
-              `**Premium Features Available:**\n` +
+              `*🚀 What's Next\\?*\n` +
+              `Explore all premium tools using the buttons below or type /help to see all commands\\.\n\n` +
+              `*Premium Features Available:*\n` +
               `📊 Probability & Risk Tools\n` +
               `🎲 Extended Casino Math\n` +
               `📈 Crypto Analytics\n` +
               `🔬 Advanced Simulations\n\n` +
-              `Enjoy your premium experience! 🎊`,
-              {
-                parse_mode: "Markdown",
-                reply_markup: {
-                  inline_keyboard: [
-                    [
-                      {
-                        text: "📊 Probability Tools",
-                        callback_data: "menu_probability",
-                      },
-                    ],
-                    [
-                      {
-                        text: "🎲 Casino Math Tools",
-                        callback_data: "menu_casino",
-                      },
-                    ],
-                    [
-                      {
-                        text: "📈 Crypto Analytics",
-                        callback_data: "menu_crypto",
-                      },
-                    ],
-                    [
-                      {
-                        text: "🔬 Simulations",
-                        callback_data: "menu_simulation",
-                      },
-                    ],
+              `Enjoy your premium experience\\! 🎊`;
+
+            await ctx.reply(paymentSuccessMessage, {
+              parse_mode: "Markdown",
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "📊 Probability Tools",
+                      callback_data: "menu_probability",
+                    },
                   ],
-                },
-              }
-            );
+                  [
+                    {
+                      text: "🎲 Casino Math Tools",
+                      callback_data: "menu_casino",
+                    },
+                  ],
+                  [
+                    {
+                      text: "📈 Crypto Analytics",
+                      callback_data: "menu_crypto",
+                    },
+                  ],
+                  [
+                    {
+                      text: "🔬 Simulations",
+                      callback_data: "menu_simulation",
+                    },
+                  ],
+                ],
+              },
+            });
             return; // Exit early after payment success message
           } else {
-            await ctx.reply(
-              "⚠️ **Payment Detected**\n\n" +
-              "We detected your payment but encountered an issue activating premium.\n\n" +
-              "**Don't worry!** Your payment was successful. Please:\n" +
-              "1. Wait a few moments and try again\n" +
-              "2. If the issue persists, contact support with your payment receipt\n\n" +
-              "We'll make sure you get your premium access! 💪"
-            );
+          await ctx.reply(
+            "⚠️ *Payment Detected*\n\n" +
+            "We detected your payment but encountered an issue activating premium\\.\n\n" +
+            "*Don't worry\\!* Your payment was successful\\. Please:\n" +
+            "1\\. Wait a few moments and try again\n" +
+            "2\\. If the issue persists, contact support with your payment receipt\n\n" +
+            "We'll make sure you get your premium access\\! 💪",
+            { parse_mode: "Markdown" }
+          );
           }
         } catch (error) {
           console.error("Error processing payment:", error);
           await ctx.reply(
-            "⚠️ **Payment Processing**\n\n" +
-            "We're processing your payment. Please wait a moment and try /start again.\n\n" +
-            "If the issue persists, your payment was successful and we'll activate premium shortly."
+            "⚠️ *Payment Processing*\n\n" +
+            "We're processing your payment\\. Please wait a moment and try /start again\\.\n\n" +
+            "If the issue persists, your payment was successful and we'll activate premium shortly\\.",
+            { parse_mode: "Markdown" }
           );
         }
       }
@@ -110,39 +111,57 @@ export async function handleStart(ctx: Context): Promise<void> {
       isPremium = false;
     }
 
-    const premiumBadge = isPremium ? "⭐ **PREMIUM USER** ⭐\n\n" : "";
+    const premiumBadge = isPremium ? "⭐ *PREMIUM USER* ⭐\n\n" : "";
 
-    const welcomeMessage = `
-${premiumBadge}🎯 **Welcome to MoneyLens!**
-
-Hi! I'm your educational analytics assistant. I help you understand probability, risk, and statistical analysis through easy-to-use tools.
-
-**📚 What I Do:**
-I provide mathematical calculations and educational insights. All tools are for **learning purposes only** - I don't give gambling advice, strategies, predictions, or financial guidance.
-
-**🛠️ What You Can Do:**
-
-📊 **Probability & Risk Tools** ${isPremium ? "✅" : "🔒 Premium"}
-Calculate streak probabilities, expected values, and variance models
-
-🎲 **Casino Math Tools** 🆓
-Learn about roulette, blackjack, and bankroll mathematics
-
-📈 **Crypto Analytics** ${isPremium ? "✅" : "🔒 Premium"}
-View token activity, holder trends, and market sentiment
-
-🔬 **Simulations** ${isPremium ? "✅" : "🔒 Premium"}
-Run Monte Carlo simulations and variance analysis
-
-${isPremium ? "**✨ You have full premium access!** All features are unlocked.\n\n" : "**💡 Getting Started:**\n• Try the free /roulette_math tool\n• Type /buy to unlock premium features\n\n"}
-
-**Quick Actions:**
-• Tap buttons below to explore
-• Type /help for all commands
-• Type /pricing for premium plans
-
-**Ready to start?** Choose a tool below or type a command! 🚀
-  `.trim();
+    // Build welcome message with proper markdown escaping
+    let welcomeMessage = `${premiumBadge}🎯 *Welcome to MoneyLens\\!*\n\n`;
+    welcomeMessage += "Hi\\! I'm your educational analytics assistant\\. I help you understand probability, risk, and statistical analysis through easy\\-to\\-use tools\\.\n\n";
+    welcomeMessage += "*📚 What I Do:*\n";
+    welcomeMessage += "I provide mathematical calculations and educational insights\\. All tools are for *learning purposes only* \\- I don't give gambling advice, strategies, predictions, or financial guidance\\.\n\n";
+    welcomeMessage += "*🛠️ What You Can Do:*\n\n";
+    
+    // Probability tools
+    if (isPremium) {
+      welcomeMessage += "📊 *Probability & Risk Tools* ✅\n";
+    } else {
+      welcomeMessage += "📊 *Probability & Risk Tools* 🔒 Premium\n";
+    }
+    welcomeMessage += "Calculate streak probabilities, expected values, and variance models\n\n";
+    
+    // Casino math (always free)
+    welcomeMessage += "🎲 *Casino Math Tools* 🆓\n";
+    welcomeMessage += "Learn about roulette, blackjack, and bankroll mathematics\n\n";
+    
+    // Crypto analytics
+    if (isPremium) {
+      welcomeMessage += "📈 *Crypto Analytics* ✅\n";
+    } else {
+      welcomeMessage += "📈 *Crypto Analytics* 🔒 Premium\n";
+    }
+    welcomeMessage += "View token activity, holder trends, and market sentiment\n\n";
+    
+    // Simulations
+    if (isPremium) {
+      welcomeMessage += "🔬 *Simulations* ✅\n";
+    } else {
+      welcomeMessage += "🔬 *Simulations* 🔒 Premium\n";
+    }
+    welcomeMessage += "Run Monte Carlo simulations and variance analysis\n\n";
+    
+    // Getting started section
+    if (isPremium) {
+      welcomeMessage += "*✨ You have full premium access\\!* All features are unlocked\\.\n\n";
+    } else {
+      welcomeMessage += "*💡 Getting Started:*\n";
+      welcomeMessage += "• Try the free /roulette_math tool\n";
+      welcomeMessage += "• Type /buy to unlock premium features\n\n";
+    }
+    
+    welcomeMessage += "*Quick Actions:*\n";
+    welcomeMessage += "• Tap buttons below to explore\n";
+    welcomeMessage += "• Type /help for all commands\n";
+    welcomeMessage += "• Type /pricing for premium plans\n\n";
+    welcomeMessage += "*Ready to start\\?* Choose a tool below or type a command\\! 🚀";
 
     await ctx.reply(welcomeMessage, {
       parse_mode: "Markdown",
