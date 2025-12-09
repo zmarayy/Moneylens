@@ -249,9 +249,11 @@ Use /buy to purchase premium access.
     // Provide helpful error messages
     let errorMessage = "❌ **Oops! Something went wrong.**\n\n";
     
-    if (err.message?.includes("Firestore")) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    
+    if (errorMsg.includes("Firestore")) {
       errorMessage += "There was a database error. Please try again in a moment.";
-    } else if (err.message?.includes("premium") || err.message?.includes("Premium")) {
+    } else if (errorMsg.includes("premium") || errorMsg.includes("Premium")) {
       errorMessage += "This feature requires premium access. Type /buy to upgrade.";
     } else {
       errorMessage += "Please try again. If the problem persists, check:\n";
