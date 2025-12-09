@@ -42,22 +42,39 @@ export async function handleStreakRisk(ctx: Context): Promise<void> {
   const probAtLeastOne = 1 - Math.pow(1 - singleStreakProb, rounds - streakLength + 1);
 
   const result = `
-📊 **Streak Risk Analysis Results**
+⭐ **Streak Risk Analysis** ⭐
 
-**Your Input:**
-• Streak Length: ${streakLength}
-• Number of Rounds: ${rounds}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**📈 Result:**
+**📥 Your Input:**
+• Streak Length: **${streakLength}**
+• Number of Rounds: **${rounds}**
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**📊 Analysis Result:**
+
 The probability of experiencing at least one streak of length **${streakLength}** in **${rounds}** rounds is:
 
-**${(probAtLeastOne * 100).toFixed(2)}%**
+**🎯 ${(probAtLeastOne * 100).toFixed(2)}%**
 
-**📚 What This Means:**
-This shows the statistical likelihood based on mathematical probability models. Each round is treated as independent, meaning past results don't affect future outcomes.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**⚠️ Important:**
-This is an educational calculation only. It does not predict actual outcomes or provide gambling strategies or advice.
+**📚 Interpretation:**
+This calculation shows the statistical likelihood based on mathematical probability models. Each round is treated as independent, meaning past results don't affect future outcomes.
+
+**💡 Key Insight:**
+${probAtLeastOne > 0.5 
+  ? `With a ${(probAtLeastOne * 100).toFixed(1)}% probability, it's more likely than not that you'll encounter this streak length.`
+  : `With a ${(probAtLeastOne * 100).toFixed(1)}% probability, this streak length is relatively uncommon.`}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**⚠️ Educational Purpose Only:**
+This is a mathematical calculation for learning purposes. It does not predict actual outcomes or provide gambling strategies or advice.
+
+**🔄 Run Another Analysis:**
+Try different parameters to see how probabilities change!
   `.trim();
 
   await ctx.reply(result, { parse_mode: "Markdown" });

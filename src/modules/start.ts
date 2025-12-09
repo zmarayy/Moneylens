@@ -20,14 +20,65 @@ export async function handleStart(ctx: Context): Promise<void> {
       const result = await activatePremiumFromStartPayload(telegramIdStr, planType);
       
       if (result.success) {
-        const durationText = planType === "lifetime" ? "lifetime" : "30 days";
+        const durationText = planType === "lifetime" ? "✨ LIFETIME ✨" : "30 days";
+        const emoji = planType === "lifetime" ? "👑" : "⭐";
+        
         await ctx.reply(
-          `✅ Payment successful! You now have ${durationText} premium access.\n\n` +
-          `Use the buttons below to explore all premium features.`
+          `${emoji} **🎉 Welcome to Premium!** ${emoji}\n\n` +
+          `**Payment Confirmed** ✅\n` +
+          `Your premium access has been activated!\n\n` +
+          `**Your Plan:**\n` +
+          `• ${durationText} Premium Access\n` +
+          `• All premium features unlocked\n` +
+          `• Priority support\n\n` +
+          `**🚀 What's Next?**\n` +
+          `Explore all premium tools using the buttons below or type /help to see all commands.\n\n` +
+          `**Premium Features Available:**\n` +
+          `📊 Probability & Risk Tools\n` +
+          `🎲 Extended Casino Math\n` +
+          `📈 Crypto Analytics\n` +
+          `🔬 Advanced Simulations\n\n` +
+          `Enjoy your premium experience! 🎊`,
+          {
+            parse_mode: "Markdown",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "📊 Probability Tools",
+                    callback_data: "menu_probability",
+                  },
+                ],
+                [
+                  {
+                    text: "🎲 Casino Math Tools",
+                    callback_data: "menu_casino",
+                  },
+                ],
+                [
+                  {
+                    text: "📈 Crypto Analytics",
+                    callback_data: "menu_crypto",
+                  },
+                ],
+                [
+                  {
+                    text: "🔬 Simulations",
+                    callback_data: "menu_simulation",
+                  },
+                ],
+              ],
+            },
+          }
         );
       } else {
         await ctx.reply(
-          "Payment detected but there was an error activating premium. Please contact support."
+          "⚠️ **Payment Detected**\n\n" +
+          "We detected your payment but encountered an issue activating premium.\n\n" +
+          "**Don't worry!** Your payment was successful. Please:\n" +
+          "1. Wait a few moments and try again\n" +
+          "2. If the issue persists, contact support with your payment receipt\n\n" +
+          "We'll make sure you get your premium access! 💪"
         );
       }
     }
@@ -36,8 +87,12 @@ export async function handleStart(ctx: Context): Promise<void> {
   // Ensure user exists in database
   await userService.getOrCreateUser(telegramIdStr, ctx.from.username);
 
+  // Check premium status for personalized welcome
+  const isPremium = await userService.checkPremiumStatus(telegramIdStr);
+  const premiumBadge = isPremium ? "⭐ **PREMIUM USER** ⭐\n\n" : "";
+
   const welcomeMessage = `
-🎯 **Welcome to MoneyLens!**
+${premiumBadge}🎯 **Welcome to MoneyLens!**
 
 Hi! I'm your educational analytics assistant. I help you understand probability, risk, and statistical analysis through easy-to-use tools.
 
@@ -46,22 +101,24 @@ I provide mathematical calculations and educational insights. All tools are for 
 
 **🛠️ What You Can Do:**
 
-📊 **Probability & Risk Tools** (Premium)
+📊 **Probability & Risk Tools** ${isPremium ? "✅" : "🔒 Premium"}
 Calculate streak probabilities, expected values, and variance models
 
-🎲 **Casino Math Tools** (Educational)
+🎲 **Casino Math Tools** 🆓
 Learn about roulette, blackjack, and bankroll mathematics
 
-📈 **Crypto Analytics** (Premium)
+📈 **Crypto Analytics** ${isPremium ? "✅" : "🔒 Premium"}
 View token activity, holder trends, and market sentiment
 
-🔬 **Simulations** (Premium)
+🔬 **Simulations** ${isPremium ? "✅" : "🔒 Premium"}
 Run Monte Carlo simulations and variance analysis
 
-**💡 Getting Started:**
-• Tap the buttons below to explore features
-• Type /help to see all commands with examples
-• Type /pricing to view premium plans
+${isPremium ? "**✨ You have full premium access!** All features are unlocked.\n\n" : "**💡 Getting Started:**\n• Try the free /roulette_math tool\n• Type /buy to unlock premium features\n\n"}
+
+**Quick Actions:**
+• Tap buttons below to explore
+• Type /help for all commands
+• Type /pricing for premium plans
 
 **Ready to start?** Choose a tool below or type a command! 🚀
   `.trim();
