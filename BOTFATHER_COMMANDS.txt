@@ -1,0 +1,22 @@
+start - Show welcome message and menu
+help - Show complete command guide with examples
+pricing - View premium pricing plans
+buy - Purchase premium access
+status - Check your premium account status
+
+streak_risk - Calculate streak risk probability (Premium)
+expected_value - Calculate expected value and variance (Premium)
+variance_model - Advanced variance analysis (Premium)
+
+roulette_math - Basic roulette probability (Free)
+blackjack_math - Calculate bust probability (Premium)
+bankroll_model - Bankroll survival analysis (Premium)
+lossstreak - Loss streak probability calculator (Premium)
+
+token_activity - View token activity metrics (Premium)
+holder_trend - Analyze holder trends (Premium)
+top_activity - View top tokens by activity (Premium)
+sentiment - Analyze market sentiment (Premium)
+
+montecarlo_model - Run Monte Carlo simulation (Premium)
+

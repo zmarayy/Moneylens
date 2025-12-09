@@ -3,95 +3,116 @@ import { userService } from "../firebase";
 import { activatePremiumFromStartPayload } from "../payment";
 
 export async function handleStart(ctx: Context): Promise<void> {
-  const telegramId = ctx.from?.id;
-  if (!telegramId) return;
+  try {
+    const telegramId = ctx.from?.id;
+    if (!telegramId) {
+      await ctx.reply("Unable to identify user. Please try again.");
+      return;
+    }
 
-  const telegramIdStr = telegramId.toString();
+    const telegramIdStr = telegramId.toString();
 
-  // Check for start payload (from Stripe redirect)
-  // In Telegraf, start parameters come after /start in the message text
-  const messageText = ctx.message && "text" in ctx.message ? ctx.message.text : "";
-  const startPayload = messageText.split(" ")[1]; // Get parameter after /start
-  if (startPayload && startPayload.startsWith("paid_")) {
-    const planType = startPayload.replace("paid_", "") as "monthly" | "lifetime";
-    
-    if (planType === "monthly" || planType === "lifetime") {
-      // Activate premium
-      const result = await activatePremiumFromStartPayload(telegramIdStr, planType);
+    // Check for start payload (from Stripe redirect)
+    // In Telegraf, start parameters come after /start in the message text
+    const messageText = ctx.message && "text" in ctx.message ? ctx.message.text : "";
+    const startPayload = messageText.split(" ")[1]; // Get parameter after /start
+    if (startPayload && startPayload.startsWith("paid_")) {
+      const planType = startPayload.replace("paid_", "") as "monthly" | "lifetime";
       
-      if (result.success) {
-        const durationText = planType === "lifetime" ? "✨ LIFETIME ✨" : "30 days";
-        const emoji = planType === "lifetime" ? "👑" : "⭐";
-        
-        await ctx.reply(
-          `${emoji} **🎉 Welcome to Premium!** ${emoji}\n\n` +
-          `**Payment Confirmed** ✅\n` +
-          `Your premium access has been activated!\n\n` +
-          `**Your Plan:**\n` +
-          `• ${durationText} Premium Access\n` +
-          `• All premium features unlocked\n` +
-          `• Priority support\n\n` +
-          `**🚀 What's Next?**\n` +
-          `Explore all premium tools using the buttons below or type /help to see all commands.\n\n` +
-          `**Premium Features Available:**\n` +
-          `📊 Probability & Risk Tools\n` +
-          `🎲 Extended Casino Math\n` +
-          `📈 Crypto Analytics\n` +
-          `🔬 Advanced Simulations\n\n` +
-          `Enjoy your premium experience! 🎊`,
-          {
-            parse_mode: "Markdown",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "📊 Probability Tools",
-                    callback_data: "menu_probability",
-                  },
-                ],
-                [
-                  {
-                    text: "🎲 Casino Math Tools",
-                    callback_data: "menu_casino",
-                  },
-                ],
-                [
-                  {
-                    text: "📈 Crypto Analytics",
-                    callback_data: "menu_crypto",
-                  },
-                ],
-                [
-                  {
-                    text: "🔬 Simulations",
-                    callback_data: "menu_simulation",
-                  },
-                ],
-              ],
-            },
+      if (planType === "monthly" || planType === "lifetime") {
+        try {
+          // Activate premium
+          const result = await activatePremiumFromStartPayload(telegramIdStr, planType);
+          
+          if (result.success) {
+            const durationText = planType === "lifetime" ? "✨ LIFETIME ✨" : "30 days";
+            const emoji = planType === "lifetime" ? "👑" : "⭐";
+            
+            await ctx.reply(
+              `${emoji} **🎉 Welcome to Premium!** ${emoji}\n\n` +
+              `**Payment Confirmed** ✅\n` +
+              `Your premium access has been activated!\n\n` +
+              `**Your Plan:**\n` +
+              `• ${durationText} Premium Access\n` +
+              `• All premium features unlocked\n` +
+              `• Priority support\n\n` +
+              `**🚀 What's Next?**\n` +
+              `Explore all premium tools using the buttons below or type /help to see all commands.\n\n` +
+              `**Premium Features Available:**\n` +
+              `📊 Probability & Risk Tools\n` +
+              `🎲 Extended Casino Math\n` +
+              `📈 Crypto Analytics\n` +
+              `🔬 Advanced Simulations\n\n` +
+              `Enjoy your premium experience! 🎊`,
+              {
+                parse_mode: "Markdown",
+                reply_markup: {
+                  inline_keyboard: [
+                    [
+                      {
+                        text: "📊 Probability Tools",
+                        callback_data: "menu_probability",
+                      },
+                    ],
+                    [
+                      {
+                        text: "🎲 Casino Math Tools",
+                        callback_data: "menu_casino",
+                      },
+                    ],
+                    [
+                      {
+                        text: "📈 Crypto Analytics",
+                        callback_data: "menu_crypto",
+                      },
+                    ],
+                    [
+                      {
+                        text: "🔬 Simulations",
+                        callback_data: "menu_simulation",
+                      },
+                    ],
+                  ],
+                },
+              }
+            );
+            return; // Exit early after payment success message
+          } else {
+            await ctx.reply(
+              "⚠️ **Payment Detected**\n\n" +
+              "We detected your payment but encountered an issue activating premium.\n\n" +
+              "**Don't worry!** Your payment was successful. Please:\n" +
+              "1. Wait a few moments and try again\n" +
+              "2. If the issue persists, contact support with your payment receipt\n\n" +
+              "We'll make sure you get your premium access! 💪"
+            );
           }
-        );
-      } else {
-        await ctx.reply(
-          "⚠️ **Payment Detected**\n\n" +
-          "We detected your payment but encountered an issue activating premium.\n\n" +
-          "**Don't worry!** Your payment was successful. Please:\n" +
-          "1. Wait a few moments and try again\n" +
-          "2. If the issue persists, contact support with your payment receipt\n\n" +
-          "We'll make sure you get your premium access! 💪"
-        );
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          await ctx.reply(
+            "⚠️ **Payment Processing**\n\n" +
+            "We're processing your payment. Please wait a moment and try /start again.\n\n" +
+            "If the issue persists, your payment was successful and we'll activate premium shortly."
+          );
+        }
       }
     }
-  }
 
-  // Ensure user exists in database
-  await userService.getOrCreateUser(telegramIdStr, ctx.from.username);
+    // Ensure user exists in database (with error handling)
+    let isPremium = false;
+    try {
+      await userService.getOrCreateUser(telegramIdStr, ctx.from.username);
+      // Check premium status for personalized welcome
+      isPremium = await userService.checkPremiumStatus(telegramIdStr);
+    } catch (error) {
+      console.error("Error accessing database:", error);
+      // Continue with default (non-premium) welcome if database fails
+      isPremium = false;
+    }
 
-  // Check premium status for personalized welcome
-  const isPremium = await userService.checkPremiumStatus(telegramIdStr);
-  const premiumBadge = isPremium ? "⭐ **PREMIUM USER** ⭐\n\n" : "";
+    const premiumBadge = isPremium ? "⭐ **PREMIUM USER** ⭐\n\n" : "";
 
-  const welcomeMessage = `
+    const welcomeMessage = `
 ${premiumBadge}🎯 **Welcome to MoneyLens!**
 
 Hi! I'm your educational analytics assistant. I help you understand probability, risk, and statistical analysis through easy-to-use tools.
@@ -123,37 +144,53 @@ ${isPremium ? "**✨ You have full premium access!** All features are unlocked.\
 **Ready to start?** Choose a tool below or type a command! 🚀
   `.trim();
 
-  await ctx.reply(welcomeMessage, {
-    parse_mode: "Markdown",
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "📊 Probability Tools",
-            callback_data: "menu_probability",
-          },
+    await ctx.reply(welcomeMessage, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "📊 Probability Tools",
+              callback_data: "menu_probability",
+            },
+          ],
+          [
+            {
+              text: "🎲 Casino Math Tools",
+              callback_data: "menu_casino",
+            },
+          ],
+          [
+            {
+              text: "📈 Crypto Analytics",
+              callback_data: "menu_crypto",
+            },
+          ],
+          [
+            {
+              text: "💰 Pricing",
+              callback_data: "menu_pricing",
+            },
+          ],
         ],
-        [
-          {
-            text: "🎲 Casino Math Tools",
-            callback_data: "menu_casino",
-          },
-        ],
-        [
-          {
-            text: "📈 Crypto Analytics",
-            callback_data: "menu_crypto",
-          },
-        ],
-        [
-          {
-            text: "💰 Pricing",
-            callback_data: "menu_pricing",
-          },
-        ],
-      ],
-    },
-  });
+      },
+    });
+  } catch (error) {
+    console.error("Error in handleStart:", error);
+    // Fallback welcome message if everything fails
+    await ctx.reply(
+      "🎯 **Welcome to MoneyLens!**\n\n" +
+      "I'm your educational analytics assistant.\n\n" +
+      "**Quick Start:**\n" +
+      "• Type /help to see all commands\n" +
+      "• Type /roulette_math for a free tool\n" +
+      "• Type /buy for premium access\n\n" +
+      "Let's get started! 🚀"
+    ).catch(() => {
+      // If even the fallback fails, do nothing
+      console.error("Failed to send fallback message");
+    });
+  }
 }
 
 export async function handleHelp(ctx: Context): Promise<void> {
