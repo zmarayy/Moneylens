@@ -245,7 +245,25 @@ Use /buy to purchase premium access.
   // Error handling
   bot.catch((err, ctx) => {
     console.error(`Error for ${ctx.updateType}:`, err);
-    ctx.reply("An error occurred. Please try again later.");
+    
+    // Provide helpful error messages
+    let errorMessage = "❌ **Oops! Something went wrong.**\n\n";
+    
+    if (err.message?.includes("Firestore")) {
+      errorMessage += "There was a database error. Please try again in a moment.";
+    } else if (err.message?.includes("premium") || err.message?.includes("Premium")) {
+      errorMessage += "This feature requires premium access. Type /buy to upgrade.";
+    } else {
+      errorMessage += "Please try again. If the problem persists, check:\n";
+      errorMessage += "• Did you use the correct command format?\n";
+      errorMessage += "• Type /help to see command examples\n";
+      errorMessage += "• Make sure you have premium if needed (type /buy)";
+    }
+    
+    ctx.reply(errorMessage, { parse_mode: "Markdown" }).catch(() => {
+      // Fallback if markdown fails
+      ctx.reply("An error occurred. Please try again or type /help for assistance.");
+    });
   });
 
   return bot;

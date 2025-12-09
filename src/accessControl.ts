@@ -24,7 +24,16 @@ export async function requirePremium(
 
   if (!isPremium) {
     await ctx.reply(
-      "🔒 This is a premium feature. Use /buy to unlock all tools."
+      "🔒 **Premium Feature Required**\n\n" +
+      "This tool is available for premium users only.\n\n" +
+      "**What you get with Premium:**\n" +
+      "✅ All probability & risk tools\n" +
+      "✅ Extended casino math analysis\n" +
+      "✅ Crypto analytics & insights\n" +
+      "✅ Advanced simulations\n\n" +
+      "**Get Premium:**\n" +
+      "Type /buy to see pricing and purchase premium access.\n\n" +
+      "💡 Tip: Some features are free! Try /roulette_math to get started."
     );
     return;
   }

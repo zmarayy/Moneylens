@@ -26,13 +26,17 @@ export const userService = {
     }
 
     const now = admin.firestore.Timestamp.now();
-    const newUser: User = {
+    const newUser: any = {
       telegramId,
-      username,
       isPremium: false,
       createdAt: now,
       updatedAt: now,
     };
+
+    // Only include username if it exists (Firestore doesn't allow undefined)
+    if (username) {
+      newUser.username = username;
+    }
 
     await userRef.set(newUser);
     return newUser;
@@ -40,10 +44,16 @@ export const userService = {
 
   async updateUser(telegramId: string, updates: Partial<User>): Promise<void> {
     const userRef = db.collection("users").doc(telegramId);
-    await userRef.update({
-      ...updates,
+    // Remove undefined values to avoid Firestore errors
+    const cleanUpdates: any = {
       updatedAt: admin.firestore.Timestamp.now(),
-    });
+    };
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        cleanUpdates[key] = value;
+      }
+    }
+    await userRef.update(cleanUpdates);
   },
 
   async getUser(telegramId: string): Promise<User | null> {

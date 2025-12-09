@@ -7,9 +7,17 @@ export async function handleStreakRisk(ctx: Context): Promise<void> {
 
   if (args.length < 2) {
     await ctx.reply(
-      "Usage: /streak_risk <streak_length> <rounds>\n\n" +
-      "Example: /streak_risk 5 200\n" +
-      "Calculates the probability of experiencing at least one losing streak of the specified length in the given number of rounds."
+      "📊 **Streak Risk Calculator**\n\n" +
+      "**How to use:**\n" +
+      "/streak_risk <streak_length> <rounds>\n\n" +
+      "**Example:**\n" +
+      "/streak_risk 5 200\n\n" +
+      "**What it does:**\n" +
+      "Calculates the probability of experiencing at least one losing streak of a specific length over a given number of rounds.\n\n" +
+      "**Parameters:**\n" +
+      "• streak_length - How long the streak is (e.g., 5)\n" +
+      "• rounds - Total number of rounds to analyze (e.g., 200)\n\n" +
+      "💡 **Tip:** This is a mathematical probability calculation for educational purposes only."
     );
     return;
   }
@@ -18,7 +26,13 @@ export async function handleStreakRisk(ctx: Context): Promise<void> {
   const rounds = parseInt(args[1], 10);
 
   if (isNaN(streakLength) || isNaN(rounds) || streakLength < 1 || rounds < 1) {
-    await ctx.reply("Please provide valid positive integers for streak length and rounds.");
+    await ctx.reply(
+      "❌ **Invalid Input**\n\n" +
+      "Please provide valid positive numbers:\n" +
+      "• Streak length must be 1 or greater\n" +
+      "• Rounds must be 1 or greater\n\n" +
+      "**Example:** /streak_risk 5 200"
+    );
     return;
   }
 
@@ -28,17 +42,22 @@ export async function handleStreakRisk(ctx: Context): Promise<void> {
   const probAtLeastOne = 1 - Math.pow(1 - singleStreakProb, rounds - streakLength + 1);
 
   const result = `
-📊 **Streak Risk Analysis**
+📊 **Streak Risk Analysis Results**
 
-**Parameters:**
+**Your Input:**
 • Streak Length: ${streakLength}
 • Number of Rounds: ${rounds}
 
-**Result:**
-• Probability of at least one streak of length ${streakLength}: ${(probAtLeastOne * 100).toFixed(2)}%
+**📈 Result:**
+The probability of experiencing at least one streak of length **${streakLength}** in **${rounds}** rounds is:
 
-**Educational Note:**
-This calculation shows the statistical probability of encountering a losing streak of a given length over a series of independent rounds. This is a mathematical probability model only and does not predict actual outcomes or provide gambling advice.
+**${(probAtLeastOne * 100).toFixed(2)}%**
+
+**📚 What This Means:**
+This shows the statistical likelihood based on mathematical probability models. Each round is treated as independent, meaning past results don't affect future outcomes.
+
+**⚠️ Important:**
+This is an educational calculation only. It does not predict actual outcomes or provide gambling strategies or advice.
   `.trim();
 
   await ctx.reply(result, { parse_mode: "Markdown" });

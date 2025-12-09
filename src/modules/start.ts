@@ -37,34 +37,33 @@ export async function handleStart(ctx: Context): Promise<void> {
   await userService.getOrCreateUser(telegramIdStr, ctx.from.username);
 
   const welcomeMessage = `
-🎯 Welcome to **MoneyLens** - Educational Analytics Bot
+🎯 **Welcome to MoneyLens!**
 
-MoneyLens provides educational tools for understanding probability, risk, and statistical analysis. All tools are designed for **educational purposes only** and do not provide gambling advice, strategies, predictions, or financial guidance.
+Hi! I'm your educational analytics assistant. I help you understand probability, risk, and statistical analysis through easy-to-use tools.
 
-**Available Tools:**
+**📚 What I Do:**
+I provide mathematical calculations and educational insights. All tools are for **learning purposes only** - I don't give gambling advice, strategies, predictions, or financial guidance.
 
-📊 **Probability & Risk Tools**
-• Streak risk analysis
-• Expected value calculations
-• Variance modeling
+**🛠️ What You Can Do:**
+
+📊 **Probability & Risk Tools** (Premium)
+Calculate streak probabilities, expected values, and variance models
 
 🎲 **Casino Math Tools** (Educational)
-• Roulette probability analysis
-• Blackjack math
-• Bankroll modeling
-• Loss streak calculations
+Learn about roulette, blackjack, and bankroll mathematics
 
-📈 **Crypto Public-Data Analytics**
-• Token activity metrics
-• Holder trend analysis
-• Top activity rankings
-• Sentiment analysis
+📈 **Crypto Analytics** (Premium)
+View token activity, holder trends, and market sentiment
 
-🔬 **Advanced Simulations**
-• Monte Carlo modeling
-• Variance analysis
+🔬 **Simulations** (Premium)
+Run Monte Carlo simulations and variance analysis
 
-Use the buttons below to explore, or type /help for command list.
+**💡 Getting Started:**
+• Tap the buttons below to explore features
+• Type /help to see all commands with examples
+• Type /pricing to view premium plans
+
+**Ready to start?** Choose a tool below or type a command! 🚀
   `.trim();
 
   await ctx.reply(welcomeMessage, {
@@ -102,37 +101,74 @@ Use the buttons below to explore, or type /help for command list.
 
 export async function handleHelp(ctx: Context): Promise<void> {
   const helpText = `
-📚 **MoneyLens Commands**
+📚 **MoneyLens - Complete Command Guide**
 
-**General:**
+**🔹 General Commands:**
 /start - Show welcome message and menu
 /help - Show this help message
-/pricing - View premium pricing
+/pricing - View premium pricing plans
 /buy - Purchase premium access
 
-**Probability Tools** (Premium):
-/streak_risk <streak> <rounds> - Calculate streak risk probability
-/expected_value <p> <payout> <loss> <rounds> - Calculate EV and variance
-/variance_model <p> <payout> <loss> <rounds> - Advanced variance analysis
+**📊 Probability Tools** (🔒 Premium):
+/streak_risk <streak> <rounds>
+  Example: /streak_risk 5 200
+  Calculates probability of a losing streak
 
-**Casino Math** (Educational):
-/roulette_math - Basic roulette probability (Free)
-/roulette_math extended <mode> - Extended analysis (Premium)
-/blackjack_math <total> - Bust probability (Premium)
-/bankroll_model <bankroll> <avgBet> <houseEdge> <rounds> - Survival analysis (Premium)
-/lossstreak <prob> <streak> <rounds> - Loss streak probability (Premium)
+/expected_value <probability> <payout> <loss> <rounds>
+  Example: /expected_value 0.5 2 1 100
+  Calculates expected value and variance
 
-**Crypto Analytics** (Premium):
-/token_activity <token> - Token activity metrics
-/holder_trend <token> - Holder trend analysis
-/top_activity - Top tokens by activity
-/sentiment <keyword> - Sentiment analysis
+/variance_model <probability> <payout> <loss> <rounds>
+  Example: /variance_model 0.5 2 1 100
+  Advanced variance analysis
 
-**Simulations** (Premium):
-/montecarlo_model <trials> - Monte Carlo simulation
-/variance_model <p> <payout> <loss> <rounds> - Variance modeling
+**🎲 Casino Math Tools:**
+/roulette_math
+  Free basic roulette probability info
 
-**Note:** All tools are for educational purposes only.
+/roulette_math extended <mode>
+  Example: /roulette_math extended red
+  Premium extended analysis (modes: red, black, even, odd, straight, split, street)
+
+/blackjack_math <total>
+  Example: /blackjack_math 15
+  Calculate bust probability (Premium)
+
+/bankroll_model <bankroll> <avgBet> <houseEdge> <rounds>
+  Example: /bankroll_model 1000 10 0.027 100
+  Bankroll survival analysis (Premium)
+
+/lossstreak <probability> <streak> <rounds>
+  Example: /lossstreak 0.52 5 200
+  Loss streak probability (Premium)
+
+**📈 Crypto Analytics** (🔒 Premium):
+/token_activity <token>
+  Example: /token_activity BTC
+  View token activity metrics
+
+/holder_trend <token>
+  Example: /holder_trend ETH
+  Analyze holder trends
+
+/top_activity
+  View top tokens by activity
+
+/sentiment <keyword>
+  Example: /sentiment bitcoin
+  Analyze market sentiment
+
+**🔬 Simulations** (🔒 Premium):
+/montecarlo_model <trials>
+  Example: /montecarlo_model 10000
+  Run Monte Carlo simulation
+
+**💡 Tips:**
+• Replace values in examples with your own numbers
+• Premium features are marked with 🔒
+• All tools are for educational purposes only
+
+**Need help?** Type any command without parameters to see usage examples!
   `.trim();
 
   await ctx.reply(helpText, { parse_mode: "Markdown" });
